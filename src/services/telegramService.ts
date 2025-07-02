@@ -1,9 +1,24 @@
 import { Payment, Refund } from "@a2seven/yoo-checkout";
 import logger from "../config/logger";
 
-const TELEGRAM_API_URL = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
+/**
+ * Отправка сообщения в Telegram.
+ *  – Возвращает true при успехе, false при любой ошибке или отсутствии credentials.
+ *  – Никогда не выбрасывает исключение, чтобы не ронять event-loop.
+ */
+const sendTelegramMessage = async (text: string): Promise<boolean> => {
+  const { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } = process.env;
 
-const sendTelegramMessage = async (text: string) => {
+  // Если переменные окружения не заданы – просто логируем и выходим.
+  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+    logger.warn(
+      "Telegram уведомления отключены – отсутствуют TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID"
+    );
+    return false;
+  }
+
+  const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
   try {
     const response = await fetch(TELEGRAM_API_URL, {
       method: "POST",
@@ -11,7 +26,7 @@ const sendTelegramMessage = async (text: string) => {
         "Content-Type": "application/json;charset=UTF-8",
       },
       body: JSON.stringify({
-        chat_id: process.env.TELEGRAM_CHAT_ID,
+        chat_id: TELEGRAM_CHAT_ID,
         parse_mode: "html",
         text,
       }),
@@ -23,9 +38,10 @@ const sendTelegramMessage = async (text: string) => {
     }
 
     logger.debug("Telegram сообщение отправлено успешно");
+    return true;
   } catch (error: any) {
     logger.error("Ошибка отправки Telegram сообщения", { error: error.message });
-    throw error;
+    return false; // Не пробрасываем ошибку – избежим unhandledRejection
   }
 };
 
@@ -35,10 +51,10 @@ export const sendPaymentSuccessNotification = async (
 ) => {
   const text = `🎉 <b>УСПЕШНАЯ ОПЛАТА</b>
 
-💰 <b>Сумма</b>: ${paymentObject.amount.value} ${paymentObject.amount.currency}
-📧 <b>Email</b>: ${paymentObject.metadata.email}
-👤 <b>Имя</b>: ${paymentObject.metadata.name || 'Не указано'}
-📞 <b>Телефон</b>: ${paymentObject.metadata.phone || 'Не указан'}
+💰 <b>Сумма</b>: ${paymentObject.amount?.value ?? '—'} ${paymentObject.amount?.currency ?? ''}
+📧 <b>Email</b>: ${paymentObject.metadata?.email || 'Не указан'}
+👤 <b>Имя</b>: ${paymentObject.metadata?.name || 'Не указано'}
+📞 <b>Телефон</b>: ${paymentObject.metadata?.phone || 'Не указан'}
 🆔 <b>ID платежа</b>: ${paymentObject.id}
 ⏰ <b>Время</b>: ${new Date().toLocaleString('ru-RU')}
 🧾 <b>Статус чека</b>: ${(() => {
@@ -61,10 +77,10 @@ export const sendPaymentSuccessNotification = async (
 export const sendPaymentWaitingNotification = async (paymentObject: Payment) => {
   const text = `⏳ <b>ПЛАТЁЖ ОЖИДАЕТ ПОДТВЕРЖДЕНИЯ</b>
 
-💰 <b>Сумма</b>: ${paymentObject.amount.value} ${paymentObject.amount.currency}
-📧 <b>Email</b>: ${paymentObject.metadata.email}
-👤 <b>Имя</b>: ${paymentObject.metadata.name || 'Не указано'}
-📞 <b>Телефон</b>: ${paymentObject.metadata.phone || 'Не указан'}
+💰 <b>Сумма</b>: ${paymentObject.amount?.value ?? '—'} ${paymentObject.amount?.currency ?? ''}
+📧 <b>Email</b>: ${paymentObject.metadata?.email || 'Не указан'}
+👤 <b>Имя</b>: ${paymentObject.metadata?.name || 'Не указано'}
+📞 <b>Телефон</b>: ${paymentObject.metadata?.phone || 'Не указан'}
 🆔 <b>ID платежа</b>: ${paymentObject.id}
 ⏰ <b>Время</b>: ${new Date().toLocaleString('ru-RU')}
 
@@ -76,10 +92,10 @@ export const sendPaymentWaitingNotification = async (paymentObject: Payment) => 
 export const sendPaymentCanceledNotification = async (paymentObject: Payment) => {
   const text = `❌ <b>ПЛАТЁЖ ОТМЕНЁН</b>
 
-💰 <b>Сумма</b>: ${paymentObject.amount.value} ${paymentObject.amount.currency}
-📧 <b>Email</b>: ${paymentObject.metadata.email}
-👤 <b>Имя</b>: ${paymentObject.metadata.name || 'Не указано'}
-📞 <b>Телефон</b>: ${paymentObject.metadata.phone || 'Не указан'}
+💰 <b>Сумма</b>: ${paymentObject.amount?.value ?? '—'} ${paymentObject.amount?.currency ?? ''}
+📧 <b>Email</b>: ${paymentObject.metadata?.email || 'Не указан'}
+👤 <b>Имя</b>: ${paymentObject.metadata?.name || 'Не указано'}
+📞 <b>Телефон</b>: ${paymentObject.metadata?.phone || 'Не указан'}
 🆔 <b>ID платежа</b>: ${paymentObject.id}
 ⏰ <b>Время</b>: ${new Date().toLocaleString('ru-RU')}
 
@@ -125,7 +141,7 @@ export const sendPaymentCanceledNotification = async (paymentObject: Payment) =>
 export const sendRefundSucceededNotification = async (refundObject: Refund) => {
   const text = `💸 <b>УСПЕШНЫЙ ВОЗВРАТ</b>
 
-💰 <b>Сумма возврата</b>: ${refundObject.amount.value} ${refundObject.amount.currency}
+💰 <b>Сумма возврата</b>: ${refundObject.amount?.value ?? '—'} ${refundObject.amount?.currency ?? ''}
 🆔 <b>ID возврата</b>: ${refundObject.id}
 🔗 <b>ID платежа</b>: ${refundObject.payment_id}
 ⏰ <b>Время</b>: ${new Date().toLocaleString('ru-RU')}

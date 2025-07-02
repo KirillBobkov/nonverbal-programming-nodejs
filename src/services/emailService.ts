@@ -1,6 +1,8 @@
 import { transporter } from "../config/email";
 import logger from "../config/logger";
 
+const EMAIL_ENABLED = Boolean(process.env.EMAIL_USER && process.env.EMAIL_PASS);
+
 export interface EmailResult {
   success: boolean;
   message: string;
@@ -220,7 +222,19 @@ const template = `
 </html>`;
 
 export const sendCourseEmail = (email: string): Promise<EmailResult> => {
-  const emailPromise = new Promise<EmailResult>((resolve, reject) => {
+  // Нет credentials → email отключён
+  if (!EMAIL_ENABLED) {
+    logger.warn("Отправка email отключена – отсутствуют EMAIL_USER/EMAIL_PASS");
+    return Promise.resolve({ success: false, message: "Email disabled" });
+  }
+
+  // Пустой email → нечего отправлять
+  if (!email) {
+    logger.warn("sendCourseEmail вызван без email");
+    return Promise.resolve({ success: false, message: "Email not provided" });
+  }
+
+  const emailPromise = new Promise<EmailResult>((resolve) => {
     transporter.sendMail(
       {
         from: process.env.EMAIL_USER,
@@ -231,10 +245,7 @@ export const sendCourseEmail = (email: string): Promise<EmailResult> => {
       (error: Error | null, info: any) => {
         if (error) {
           logger.error("Ошибка отправки письма", { error: error.message, email });
-          reject({
-            success: false,
-            message: error.message || "Ошибка отправки письма",
-          });
+          resolve({ success: false, message: error.message || "Ошибка отправки письма" });
         } else {
           logger.info("Письмо с курсом отправлено успешно", { email, messageId: info.messageId });
           resolve({ success: true, message: "Письмо успешно отправлено" });
@@ -243,13 +254,11 @@ export const sendCourseEmail = (email: string): Promise<EmailResult> => {
     );
   });
 
-  const timeoutPromise = new Promise<EmailResult>((_, reject) => {
+  // Если за 20 сек. ничего не произошло – считаем неуспехом, но не бросаем.
+  const timeoutPromise = new Promise<EmailResult>((resolve) => {
     setTimeout(() => {
-      reject({
-        success: false,
-        message: "Ошибка отправки письма",
-      });
-    }, 20000); // 20 секунд таймаут
+      resolve({ success: false, message: "Timeout" });
+    }, 20000);
   });
 
   return Promise.race([emailPromise, timeoutPromise]);

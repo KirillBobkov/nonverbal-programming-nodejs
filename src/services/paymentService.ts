@@ -1,4 +1,4 @@
-import { ICreatePayment, ICreateReceipt, Payment, Refund, IReceipt } from "@a2seven/yoo-checkout";
+import { ICreatePayment, Payment, Refund } from "@a2seven/yoo-checkout";
 import { v4 as uuidv4 } from "uuid";
 import { YouKassa } from "../config/yookassa";
 

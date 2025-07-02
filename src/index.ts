@@ -22,6 +22,15 @@ app.use(express.json());
 
 app.use("/api", paymentRoutes);
 
+// Безопасные глобальные хендлеры – логируем необработанные ошибки, но не падаем.
+process.on("unhandledRejection", (reason: any) => {
+  logger.error("ГЛОБАЛЬНАЯ ОШИБКА: Unhandled Promise Rejection", { reason });
+});
+
+process.on("uncaughtException", (error: Error) => {
+  logger.error("ГЛОБАЛЬНАЯ ОШИБКА: Uncaught Exception", { error: error.message, stack: error.stack });
+});
+
 app.listen(PORT, "0.0.0.0", () => {
   logger.info(`Сервер запущен на http://localhost:${PORT}`);
 });
