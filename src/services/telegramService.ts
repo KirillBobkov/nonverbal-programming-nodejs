@@ -55,6 +55,7 @@ export const sendPaymentSuccessNotification = async (
 📧 <b>Email</b>: ${paymentObject.metadata?.email || 'Не указан'}
 👤 <b>Имя</b>: ${paymentObject.metadata?.name || 'Не указано'}
 📞 <b>Телефон</b>: ${paymentObject.metadata?.phone || 'Не указан'}
+💰 <b>Тариф</b>: ${paymentObject.metadata?.tariff || 'Нет тарифа'}
 🆔 <b>ID платежа</b>: ${paymentObject.id}
 ⏰ <b>Время</b>: ${new Date().toLocaleString('ru-RU')}
 🧾 <b>Статус чека</b>: ${(() => {
@@ -69,7 +70,7 @@ export const sendPaymentSuccessNotification = async (
       return 'Статус неизвестен';
   }
 })()}
-📩 <b>Письмо с материалами курса</b>: ${emailStatus ? (emailStatus.success ? '✅ Отправлено' : `❌ Не отправлено: ${emailStatus.message}`) : '❌ Не отправлено'}`;
+📩 <b>Письмо с материалами курса</b>: ${emailStatus ? (emailStatus.success ? '✅ Отправлено' : `❌ Не отправлено: ${emailStatus.message}. Нужно связаться и уточнить получили ли письмо.`) : '❌ Не отправлено'}`;
 
   await sendTelegramMessage(text);
 };
@@ -81,6 +82,7 @@ export const sendPaymentWaitingNotification = async (paymentObject: Payment) => 
 📧 <b>Email</b>: ${paymentObject.metadata?.email || 'Не указан'}
 👤 <b>Имя</b>: ${paymentObject.metadata?.name || 'Не указано'}
 📞 <b>Телефон</b>: ${paymentObject.metadata?.phone || 'Не указан'}
+💰 <b>Тариф</b>: ${paymentObject.metadata?.tariff || 'Нет тарифа'}
 🆔 <b>ID платежа</b>: ${paymentObject.id}
 ⏰ <b>Время</b>: ${new Date().toLocaleString('ru-RU')}
 
@@ -96,6 +98,7 @@ export const sendPaymentCanceledNotification = async (paymentObject: Payment) =>
 📧 <b>Email</b>: ${paymentObject.metadata?.email || 'Не указан'}
 👤 <b>Имя</b>: ${paymentObject.metadata?.name || 'Не указано'}
 📞 <b>Телефон</b>: ${paymentObject.metadata?.phone || 'Не указан'}
+💰 <b>Тариф</b>: ${paymentObject.metadata?.tariff || 'Нет тарифа'}
 🆔 <b>ID платежа</b>: ${paymentObject.id}
 ⏰ <b>Время</b>: ${new Date().toLocaleString('ru-RU')}
 

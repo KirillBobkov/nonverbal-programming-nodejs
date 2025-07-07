@@ -65,7 +65,8 @@ router.post("/payment/notifications", async (req: any, res: any) => {
     logger.info("Успешный платёж", { 
       paymentId: req.body.object.id, 
       email: req.body.object.metadata.email,
-      amount: req.body.object.amount.value 
+      amount: req.body.object.amount.value,
+      tariff: req.body.object.metadata.tariff
     });
 
     try {

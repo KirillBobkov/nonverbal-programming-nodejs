@@ -2,20 +2,27 @@ import { ICreatePayment, Payment, Refund } from "@a2seven/yoo-checkout";
 import { v4 as uuidv4 } from "uuid";
 import { YouKassa } from "../config/yookassa";
 
-export const COURSE_PRICE = "5990";
 export const COURSE_CURRENCY = "RUB";
 export const RETURN_URL = process.env.RETURN_URL || "https://alexandrvasilev.ru/nonverbal-programming?paid=1"; 
+
+
+const priceMap = {
+  "base": "4990",
+  "optimal": "13990",
+  "premium": "99990",
+}
 
 // Формирование данных для платежа
 const createPaymentPayload = (body: {
   name: string;
   email: string;
   phone: string;
+  tariff: "base" | "optimal" | "premium";
 }): ICreatePayment => {
   return {
     amount: {
-      value: COURSE_PRICE,
-      currency: COURSE_CURRENCY,
+      value: priceMap[body.tariff] ?? "4990",
+      currency: "RUB",
     },
     payment_method_data: {
       type: "bank_card",
@@ -29,6 +36,7 @@ const createPaymentPayload = (body: {
       name: body.name || "",
       email: body.email || "",
       phone: body.phone || "",
+      tariff: body.tariff || "Нет тарифа",
     },
     receipt: {
       customer: {
@@ -41,8 +49,8 @@ const createPaymentPayload = (body: {
           description: "Невербальное программирование (курс из 12 видеоуроков)",
           quantity: "1",
           amount: {
-            value: COURSE_PRICE,
-            currency: COURSE_CURRENCY,
+            value: priceMap[body.tariff] ?? "4990",
+            currency: "RUB",
           },
           vat_code: 1,
         },
@@ -58,6 +66,7 @@ export const processPayment = async (body: {
   name: string;
   email: string;
   phone: string;
+  tariff: "base" | "optimal" | "premium";
 }) => {
   const payment = await YouKassa.createPayment(createPaymentPayload(body), uuidv4());
   return payment;
