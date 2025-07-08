@@ -2,15 +2,11 @@ import { ICreatePayment, Payment, Refund } from "@a2seven/yoo-checkout";
 import { v4 as uuidv4 } from "uuid";
 import { YouKassa } from "../config/yookassa";
 
-export const COURSE_CURRENCY = "RUB";
-export const RETURN_URL = process.env.RETURN_URL || "https://alexandrvasilev.ru/nonverbal-programming?paid=1"; 
-
-
 const priceMap = {
-  "base": "4990",
-  "optimal": "13990",
-  "premium": "99990",
-}
+  base: "4990",
+  optimal: "13990",
+  premium: "99990",
+};
 
 // Формирование данных для платежа
 const createPaymentPayload = (body: {
@@ -30,7 +26,7 @@ const createPaymentPayload = (body: {
     capture: true,
     confirmation: {
       type: "redirect",
-      return_url: RETURN_URL,
+      return_url: "https://alexandrvasilev.ru/nonverbal-programming?paid=1",
     },
     metadata: {
       name: body.name || "",
@@ -68,98 +64,117 @@ export const processPayment = async (body: {
   phone: string;
   tariff: "base" | "optimal" | "premium";
 }) => {
-  const payment = await YouKassa.createPayment(createPaymentPayload(body), uuidv4());
+  const payment = await YouKassa.createPayment(
+    createPaymentPayload(body),
+    uuidv4()
+  );
   return payment;
 };
 
-export const isPaymentSucceededNotification = (body: unknown): body is { type: string; event: string; object: Payment } => {
+export const isPaymentSucceededNotification = (
+  body: unknown
+): body is { type: string; event: string; object: Payment } => {
   return Boolean(
-    Boolean(body) &&
-    typeof body === 'object' && body !== null &&
-    'type' in body &&
-    'event' in body &&
-    'object' in body &&
-    body.type === "notification" &&
-    body.event === "payment.succeeded" &&
-    body.object &&
-    typeof body.object === 'object'
+    body &&
+      typeof body === "object" &&
+      body !== null &&
+      "type" in body &&
+      "event" in body &&
+      "object" in body &&
+      body.type === "notification" &&
+      body.event === "payment.succeeded" &&
+      body.object &&
+      typeof body.object === "object" &&
+      "id" in body.object &&
+      "metadata" in body.object &&
+      body.object.metadata !== null &&
+      typeof body.object.metadata === "object" &&
+      "email" in body.object.metadata
   );
 };
 
-export const isPaymentWaitingForCaptureNotification = (body: unknown): body is { type: string; event: string; object: Payment } => {
+export const isPaymentWaitingForCaptureNotification = (
+  body: unknown
+): body is { type: string; event: string; object: Payment } => {
   return Boolean(
-    Boolean(body) &&
-    typeof body === 'object' && body !== null &&
-    'type' in body &&
-    'event' in body &&
-    'object' in body &&
-    body.type === "notification" &&
-    body.event === "payment.waiting_for_capture" &&
-    body.object &&
-    typeof body.object === 'object'
+    body &&
+      typeof body === "object" &&
+      body !== null &&
+      "type" in body &&
+      "event" in body &&
+      "object" in body &&
+      body.type === "notification" &&
+      body.event === "payment.waiting_for_capture" &&
+      body.object &&
+      typeof body.object === "object"
   );
 };
 
-export const isPaymentCanceledNotification = (body: unknown): body is { type: string; event: string; object: Payment } => {
+export const isPaymentCanceledNotification = (
+  body: unknown
+): body is { type: string; event: string; object: Payment } => {
   return Boolean(
-    Boolean(body) &&
-    typeof body === 'object' && body !== null &&
-    'type' in body &&
-    'event' in body &&
-    'object' in body &&
-    body.type === "notification" &&
-    body.event === "payment.canceled" &&
-    body.object &&
-    typeof body.object === 'object'
+    body &&
+      typeof body === "object" &&
+      body !== null &&
+      "type" in body &&
+      "event" in body &&
+      "object" in body &&
+      body.type === "notification" &&
+      body.event === "payment.canceled" &&
+      body.object &&
+      typeof body.object === "object"
   );
 };
 
-export const isRefundSucceededNotification = (body: any): boolean => {
-  return (
-    body.type === "notification" &&
-    body.event === "refund.succeeded" &&
-    body.object
+export const isRefundSucceededNotification = (body: unknown): body is { type: string; event: string; object: Refund } => {
+  return Boolean(
+      body &&
+      typeof body === "object" &&
+      body !== null &&
+      "type" in body &&
+      "event" in body &&
+      "object" in body &&
+      body.type === "notification" &&
+      body.event === "refund.succeeded" &&
+      body.object
   );
 };
 
 // Валидация webhook для платежей
-export const validatePaymentWebhook = (body: any): body is { type: string; event: string; object: Payment } => {
-  if (!body || body.type !== "notification" || !body.object) {
-    return false;
-  }
-
-  const paymentObject = body.object;
-  
-  // Проверяем наличие обязательных полей для объекта платежа
-  const hasRequiredFields = 
-    paymentObject.id &&
-    paymentObject.amount &&
-    paymentObject.amount.value &&
-    paymentObject.amount.currency;
-
-  // Для платежей проверяем metadata
-  const hasMetadata = 
-    paymentObject.metadata &&
-    paymentObject.metadata.email;
-
-  return hasRequiredFields && hasMetadata;
+export const validatePaymentWebhook = (
+  body: any
+): body is { type: string; event: string; object: Payment } => {
+  return Boolean(
+    body &&
+      body?.type === "notification" &&
+      body.object?.id &&
+      body.object?.amount?.value &&
+      body.object?.amount?.currency &&
+      body.object?.metadata?.email
+  );
 };
-
 // Валидация webhook для возвратов
-export const validateRefundWebhook = (body: any): body is { type: string; event: string; object: Refund } => {
-  if (!body || body.type !== "notification" || !body.object || body.event !== "refund.succeeded") {
-    return false;
-  }
-
-  const refundObject = body.object;
-  
-  // Проверяем наличие обязательных полей для объекта возврата
-  const hasRequiredFields = 
-    refundObject.id &&
-    refundObject.amount &&
-    refundObject.amount.value &&
-    refundObject.amount.currency &&
-    refundObject.payment_id;
-
-  return hasRequiredFields;
-}; 
+export const validateRefundWebhook = (
+  body: unknown
+): body is { type: string; event: string; object: Refund } => {
+  return Boolean(
+    body &&
+      typeof body === "object" &&
+      body !== null &&
+      "type" in body &&
+      "event" in body &&
+      "object" in body &&
+      body.type === "notification" &&
+      body.event === "refund.succeeded" &&
+      body.object &&
+      typeof body.object === "object" &&
+      "id" in body.object &&
+      "amount" in body.object &&
+      typeof body.object.amount === "object" &&
+      body.object.amount !== null &&
+      "currency" in body.object.amount &&
+      body.object.amount.currency !== null &&
+      "payment_id" in body.object
+  );
+};
