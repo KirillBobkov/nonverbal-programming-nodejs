@@ -93,15 +93,15 @@ const generateEmailTemplate = (tariff: "base" | "premium" | "optimal") => {
         .course-title{font-size:26px;text-transform:uppercase;font-weight:700;color:#fff;text-align:center;margin-bottom:20px}
         .subtitle{font-size:16px;color:#a200ff;text-align:center;margin-bottom:30px}
         .description{font-size:14px;color:#a2a2a2;text-align:center;margin-bottom:30px;line-height:1.5}
-        .badge{background:#EDB834;border-radius:10px;padding:15px;text-align:center;margin:20px auto;width:180px;color:#000;font-weight:600}
-        .lessons{border-radius:10px;padding:25px;margin:25px 0}
-        .lesson{background:#1C1C1C;border-radius:8px;padding:15px;padding-bottom:25px;margin-bottom:20px;}
+        .badge{background:#EDB834;border-radius:30px;padding:15px;text-align:center;margin:20px auto;width:180px;color:#000;font-weight:600}
+        .lessons{border-radius:30px;padding:25px;margin:25px 0}
+        .lesson{background:#1C1C1C;border-radius:30px;padding:15px;padding-bottom:25px;margin-bottom:20px;}
         .lesson-num{font-size:12px;color: #a200ff;font-weight:600;margin-bottom:5px}
         .lesson-title{font-size:14px;color:#fff;font-weight:600;margin-bottom:8px}
         .lesson-desc{font-size:13px;color:#a2a2a2;margin-bottom:15px}
-        .lesson-link{background:#EDB834;color:#000;padding:8px 12px;border-radius:5px;text-decoration:none;font-size:12px;font-weight:600}
+        .lesson-link{background:#EDB834;color:#000;padding:8px 12px;border-radius:30px;text-decoration:none;font-size:12px;font-weight:600}
         .cta{text-align:center;margin:30px 0}
-        .cta-btn{display:inline-block;background:#EDB834;color:#000;padding:15px 25px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px}
+        .cta-btn{display:inline-block;background:#EDB834;color:#000;padding:15px 25px;border-radius:30px;text-decoration:none;font-weight:700;font-size:14px}
         .footer{background:#181818;padding:25px 20px;text-align:center;border-top:1px solid #1C1C1C}
         .footer-logo{height:35px;margin-bottom:15px}
         .contacts{font-size:11px;color:#a2a2a2;margin-bottom:15px}
