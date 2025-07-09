@@ -78,7 +78,13 @@ export const sendPaymentSuccessNotification = async (
     emailStatus.success
       ? "✅ Отправлено"
       : `❌ Не отправлено: ${emailStatus.message}. Нужно связаться и уточнить получили ли письмо.`
-  }`;
+  }
+  ${
+    paymentObject.metadata?.tariff === "premium"
+      ? "🎉 <b>Тариф премиум, поэтому нужно уточнить запись на онлайн проработки</b>"
+      : ""
+  }
+  `;
 
   await sendTelegramMessage(text);
 };

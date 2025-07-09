@@ -10,6 +10,18 @@ const generateEmailTemplate = (tariff: "base" | "premium" | "optimal") => {
         </div>
     `;
 
+  if (tariff === "premium") {
+    bonusContent += `
+            <div class="lesson" style="background-color: #2a2a2a; border-left: 4px solid #EDB834;">
+                <div class="lesson-text">
+                    <div class="lesson-num">Личные сессии</div>
+                    <div class="lesson-title">8 персональных онлайн-сессий с автором</div>
+                    <div class="lesson-desc">Автор скоро свяжется с вами для согласования времени.</div>
+                </div>
+            </div>
+            `;
+  }
+
   if (tariff === "base") {
     bonusContent += `
         <div class="lesson">
@@ -19,18 +31,6 @@ const generateEmailTemplate = (tariff: "base" | "premium" | "optimal") => {
                 <div class="lesson-desc">Расслабляющая медитация для снятия стресса</div>
             </div>
             <a href="#" class="lesson-link">Слушать</a>
-        </div>
-        `;
-  }
-
-  if (tariff === "premium") {
-    bonusContent += `
-        <div class="lesson" style="background-color: #2a2a2a; border-left: 4px solid #EDB834;">
-            <div class="lesson-text">
-                <div class="lesson-num">Личные сессии</div>
-                <div class="lesson-title">8 персональных онлайн-сессий с автором</div>
-                <div class="lesson-desc">Автор скоро свяжется с вами для согласования времени.</div>
-            </div>
         </div>
         `;
   }
@@ -71,8 +71,6 @@ const generateEmailTemplate = (tariff: "base" | "premium" | "optimal") => {
         </div>
         `;
   }
-
-
 
   return `
 <!DOCTYPE html>

@@ -90,7 +90,7 @@ router.post("/payment/notifications", async (req: any, res: any) => {
         req.body.object.metadata.email,
         req.body.object.metadata.tariff
       );
-      // await sendPaymentSuccessNotification(req.body.object, emailStatus);
+      await sendPaymentSuccessNotification(req.body.object, emailStatus);
     } catch (error: any) {
       logger.error("Ошибка отправки уведомлений об успешном платеже", {
         error: error.message,

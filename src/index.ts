@@ -18,6 +18,10 @@ app.use(
     origin: ['https://alexandrvasilev.onrender.com', 'https://alexandrvasilev.ru']
   })
 );
+
+// Этот middleware парсит входящие запросы с Content-Type: application/json
+// и делает их тело (body) доступным в req.body.
+// Без него req.body в твоих роутах будет undefined.
 app.use(express.json());
 
 app.use("/api", paymentRoutes);
