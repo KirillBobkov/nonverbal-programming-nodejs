@@ -11,8 +11,6 @@ const app = express();
 const PORT = Number(process.env.PORT) || 4001;
 
 
-console.log(process.env.NODE_ENV);
-
 app.use(
   cors({
     credentials: true,
@@ -50,5 +48,5 @@ process.on("uncaughtException", async (error: Error) => {
 });
 
 app.listen(PORT, "0.0.0.0", () => {
-  logger.info(`Сервер запущен на http://localhost:${PORT}`);
+  logger.info(`Сервер запущен на http://localhost:${PORT}, NODE_ENV: ${process.env.NODE_ENV}`);
 });
