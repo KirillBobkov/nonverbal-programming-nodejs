@@ -45,32 +45,37 @@ const generateEmailTemplate = (tariff: "base" | "premium" | "optimal") => {
             </div>
             <a href="#" class="lesson-link">Вступить</a>
         </div>
-        <div class="lesson">
-            <div class="lesson-text">
-                <div class="lesson-num">Медитация</div>
-                <div class="lesson-title">Аудиомедитация (релакс)</div>
-                <div class="lesson-desc">Расслабляющая медитация для снятия стресса</div>
-            </div>
-            <a href="#" class="lesson-link">Слушать</a>
-        </div>
-        <div class="lesson">
-            <div class="lesson-text">
-                <div class="lesson-num">Медитация</div>
-                <div class="lesson-title">Аудиомедитация (мотивация)</div>
-                <div class="lesson-desc">Заряжающая медитация на продуктивный день</div>
-            </div>
-            <a href="#" class="lesson-link">Слушать</a>
-        </div>
-        <div class="lesson">
-            <div class="lesson-text">
-                <div class="lesson-num">Медитация</div>
-                <div class="lesson-title">Аудиомедитация (уверенность)</div>
-                <div class="lesson-desc">Медитация для повышения уверенности в себе</div>
-            </div>
-            <a href="#" class="lesson-link">Слушать</a>
-        </div>
         `;
   }
+
+//   if (tariff !== "base") {
+//     bonusContent += `
+//         <div class="lesson">
+//             <div class="lesson-text">
+//                 <div class="lesson-num">Медитация</div>
+//                 <div class="lesson-title">Аудиомедитация (релакс)</div>
+//                 <div class="lesson-desc">Расслабляющая медитация для снятия стресса</div>
+//             </div>
+//             <a href="#" class="lesson-link">Слушать</a>
+//         </div>
+//         <div class="lesson">
+//             <div class="lesson-text">
+//                 <div class="lesson-num">Медитация</div>
+//                 <div class="lesson-title">Аудиомедитация (мотивация)</div>
+//                 <div class="lesson-desc">Заряжающая медитация на продуктивный день</div>
+//             </div>
+//             <a href="#" class="lesson-link">Слушать</a>
+//         </div>
+//         <div class="lesson">
+//             <div class="lesson-text">
+//                 <div class="lesson-num">Медитация</div>
+//                 <div class="lesson-title">Аудиомедитация (уверенность)</div>
+//                 <div class="lesson-desc">Медитация для повышения уверенности в себе</div>
+//             </div>
+//             <a href="#" class="lesson-link">Слушать</a>
+//         </div>
+//         `;
+//   }
 
   return `
 <!DOCTYPE html>

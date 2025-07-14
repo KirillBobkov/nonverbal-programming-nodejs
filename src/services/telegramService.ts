@@ -6,7 +6,7 @@ import logger from "../config/logger";
  *  – Возвращает true при успехе, false при любой ошибке или отсутствии credentials.
  *  – Никогда не выбрасывает исключение, чтобы не ронять event-loop.
  */
-const sendTelegramMessage = async (text: string): Promise<boolean> => {
+export const sendTelegramMessage = async (text: string): Promise<boolean> => {
   const { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } = process.env;
 
   // Если переменные окружения не заданы – просто логируем и выходим.

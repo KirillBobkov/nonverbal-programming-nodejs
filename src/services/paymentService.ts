@@ -3,9 +3,12 @@ import { v4 as uuidv4 } from "uuid";
 import { YouKassa } from "../config/yookassa";
 
 const priceMap = {
-  base: "4990",
-  optimal: "13990",
-  premium: "99990",
+  // base: "4990",
+  // optimal: "13990",
+  // premium: "99990",
+  base: "2",
+  optimal: "2",
+  premium: "2",
 };
 
 // Формирование данных для платежа
