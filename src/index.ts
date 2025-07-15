@@ -25,6 +25,15 @@ app.use(express.json());
 
 app.use("/api", paymentRoutes);
 
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Server is running',
+    timestamp: new Date().toISOString(),
+    port: PORT,
+    env: process.env.NODE_ENV || 'development'
+  });
+});
+
 // Безопасные глобальные хендлеры – логируем необработанные ошибки, но не падаем.
 process.on("unhandledRejection", async (reason: any) => {
   logger.error("ГЛОБАЛЬНАЯ ОШИБКА: Unhandled Promise Rejection", { reason });
